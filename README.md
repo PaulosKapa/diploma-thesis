@@ -1,0 +1,1 @@
+This is a repository for my diploma thesis. The main goal of this thesis is to develop an ECG. More information on the block diagram bellow<br><img width="1920" height="1080" alt="Patient" src="https://github.com/user-attachments/assets/cde2ce92-5889-48af-8379-e1c8507f075e" />
