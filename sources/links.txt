@@ -1,6 +1,7 @@
 ecg electronics:
 https://www.sciencedirect.com/science/article/pii/S0263224126002757#s0010
 https://gvpress.com/journals/IJMUE/vol11_no5/32.pdf
+https://www.researchgate.net/publication/267842421_Filtering_of_ECG_signal_using_Butterworth_Filter_and_its_feature_extraction
 heart:
 https://www.ncbi.nlm.nih.gov/books/NBK279249/
 https://tinyurl.com/5n7nkukt
