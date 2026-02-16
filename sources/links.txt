@@ -1,0 +1,12 @@
+ecg electronics:
+https://www.sciencedirect.com/science/article/pii/S0263224126002757#s0010
+https://gvpress.com/journals/IJMUE/vol11_no5/32.pdf
+heart:
+https://www.ncbi.nlm.nih.gov/books/NBK279249/
+https://tinyurl.com/5n7nkukt
+ecg:
+https://www.ncbi.nlm.nih.gov/books/NBK536878/
+https://www.mdpi.com/journal/signals/special_issues/Biosignals_Processing_Analysis_Biomedicine
+https://kic.uoi.gr/wp-content/uploads/2020/04/METHODS-AND-TOOLS-FOR-PROCESSING-BIOSIGNALS.pdf
+atrial fibrillation:
+https://www.ncbi.nlm.nih.gov/books/NBK526072/
