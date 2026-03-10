@@ -5,6 +5,7 @@ https://gvpress.com/journals/IJMUE/vol11_no5/32.pdf
 https://www.ti.com/lit/ds/symlink/ina826.pdf?ts=1772352272031&ref_url=https%253A%252F%252Fapp.ultralibrarian.com%252F
 https://www.ti.com/solution/electrocardiogram-ecg
 https://www.researchgate.net/publication/267842421_Filtering_of_ECG_signal_using_Butterworth_Filter_and_its_feature_extraction
+https://pmc.ncbi.nlm.nih.gov/articles/PMC6085204/
 heart:
 https://www.ncbi.nlm.nih.gov/books/NBK279249/
 https://tinyurl.com/5n7nkukt
