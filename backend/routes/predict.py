@@ -30,6 +30,7 @@ async def predict_heart(input_data: ECGData):
     #since the model gives a float from 0 to 1 (sinoid, see the ml/cnn_train.py for more).
     output = float(prediction[0][0])
     #if the model returns more than .5 return afib, else normal (see the afformentioned files for more).
-    if output>.5:
-        return 1
-    return 0
+    return {
+        "is_afib": 1 if output > 0.5 else 0,
+        "probability": output
+    }

@@ -1,4 +1,4 @@
-#buld: docker build -t ecg-backend
+#buld: docker build -t ecg-backend . 
 #run: docker run -p 8000:8000 ecg-backend
 FROM python:3.13-slim
 #declare the workspace

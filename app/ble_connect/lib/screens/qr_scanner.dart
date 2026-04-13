@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../services/ble_service.dart';
 import '../services/parser.dart';
-import '../main.dart';
+import 'afib_recognise.dart';
 
 
 //!!! for this to work with a raspberry pi you should run a ble GATT script on the pi!!!
@@ -41,13 +41,13 @@ class _QrScannerPageState extends State<QrScannerPage> {
               setState(() => isProcessing = true);
               await controller.stop();
               
-              //return to the home page
+              //go to the afib page
               if (mounted){
                 //connect to the device
                 bool connected = await connectBle(context, cleanMac);
                 if(connected){
                   await Navigator.push(context, 
-                    MaterialPageRoute(builder: (context) => MainApp())
+                    MaterialPageRoute(builder: (context) => PredictionScreen())
       );
                 }
                 else{
