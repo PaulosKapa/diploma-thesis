@@ -1,0 +1,1 @@
+String SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";

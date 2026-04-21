@@ -11,7 +11,7 @@ data_dir = os.getenv("DATA_PATH")
 with open(os.path.join(data_dir, 'RECORDS'), 'r') as f:
     record_names = [line.strip() for line in f]
 
-#the sampling rate is 360 Hz. We want a 10 secon sample
+#the sampling rate is 360 Hz. We want a 10 second sample
 fs = 360 
 window_samples = fs * 10
 

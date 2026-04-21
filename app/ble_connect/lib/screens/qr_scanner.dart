@@ -44,7 +44,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
               //go to the afib page
               if (mounted){
                 //connect to the device
-                bool connected = await connectBle(context, cleanMac);
+                bool connected = await connectBle(cleanMac);
                 if(connected){
                   await Navigator.push(context, 
                     MaterialPageRoute(builder: (context) => PredictionScreen())
