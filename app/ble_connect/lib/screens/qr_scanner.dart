@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import '../services/ble_service.dart';
+import '../services/ble_connect.dart';
 import '../services/parser.dart';
 import 'afib_recognise.dart';
 
