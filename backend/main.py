@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from routes import predict
-
+#run without docker
+#uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 #start a fastAPI server
 app = FastAPI()
 

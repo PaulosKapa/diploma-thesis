@@ -19,7 +19,7 @@ int array[3600] = {};
 void setup() {
   Serial.begin(115200);
   Serial.println("Starting BLE work!");
-  //name th device
+  //name the device
   BLEDevice::init("EcG");
   //set the ecg device as a server
   BLEServer *pServer = BLEDevice::createServer();

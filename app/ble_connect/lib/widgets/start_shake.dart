@@ -47,7 +47,6 @@ class _startShakePage extends State<startShake>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("shake")),
       body: Center(
         child: Text(
           _shakeInfo,

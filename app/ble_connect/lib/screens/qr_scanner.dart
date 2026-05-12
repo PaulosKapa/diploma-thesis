@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../services/ble_connect.dart';
 import '../services/parser.dart';
-import 'afib_recognise.dart';
+import 'ecg_afib.dart';
 
 
-//!!! for this to work with a raspberry pi you should run a ble GATT script on the pi!!!
 class QrScannerPage extends StatefulWidget {
   const QrScannerPage({super.key});
 
@@ -18,7 +17,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
   //this variable is to check whether or not we already use the scanner
   bool isProcessing = false;
   MobileScannerController controller = MobileScannerController();
-  //method tostop the camera
+  //method to stop the camera
   @override
   void dispose() {
     controller.dispose(); 
@@ -47,7 +46,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
                 bool connected = await connectBle(cleanMac);
                 if(connected){
                   await Navigator.push(context, 
-                    MaterialPageRoute(builder: (context) => PredictionScreen())
+                    MaterialPageRoute(builder: (context) => EcgAfib())
       );
                 }
                 else{
