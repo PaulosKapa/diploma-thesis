@@ -76,6 +76,7 @@ class EcgAfibState extends State<EcgAfib> {
     setState(() {
       result = tempResult;
       isLoading = false;
+      ai_list.clear();
     });
   }
 
@@ -84,10 +85,6 @@ class EcgAfibState extends State<EcgAfib> {
     bool isAiReady = ai_list.length == ai_list_size;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Live ECG'),
-        backgroundColor: Colors.redAccent,
-      ),
       body: Column(
         children: [
           // Το γράφημα (Αν δεν το έχεις σε ξεχωριστό αρχείο, κάνε επικόλληση την class του εδώ κάτω)
@@ -111,7 +108,7 @@ class EcgAfibState extends State<EcgAfib> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: Text(
-                      'Αποτέλεσμα Ανάλυσης: ${result == 1 ? "Πιθανή Κολπική Μαρμαρυγή (AFib)" : "Φυσιολογικό"}',
+                      result == 1 ? "Probable AFib" : "Normal cardiac rythm",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -128,17 +125,17 @@ class EcgAfibState extends State<EcgAfib> {
                     onPressed: (isAiReady && !isLoading) ? triggerAnalysis : null,
                     icon: isLoading 
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Icon(Icons.analytics),
+                        : const Icon(Icons.auto_awesome),
                     label: Text(
                       isLoading 
-                          ? 'Ανάλυση...'
+                          ? 'Analyzing...'
                           : isAiReady 
-                              ? 'Ανάλυση AI (3600 Points)'
-                              : 'Συλλογή... ${ai_list.length}/$ai_list_size',
+                              ? 'Ai analysis'
+                              : 'Collecting ${((ai_list.length / ai_list_size) * 100).toStringAsFixed(0)}%',
                       style: const TextStyle(fontSize: 16),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent,
+                      backgroundColor: const Color.fromARGB(255, 125, 90, 184),
                       foregroundColor: Colors.white,
                     ),
                   ),

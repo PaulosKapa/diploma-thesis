@@ -31,11 +31,11 @@ class EcgChartWidget extends StatelessWidget {
           show: true,
           drawVerticalLine: true,
           getDrawingHorizontalLine: (value) => FlLine(
-            color: Colors.redAccent.withOpacity(0.2),
+            color: const Color.fromARGB(255, 73, 38, 143).withValues(alpha: 0.2),
             strokeWidth: 1,
           ),
           getDrawingVerticalLine: (value) => FlLine(
-            color: Colors.redAccent.withOpacity(0.2),
+            color: const Color.fromARGB(255, 73, 38, 143).withValues(alpha: 0.2),
             strokeWidth: 1,
           ),
         ),
@@ -43,7 +43,7 @@ class EcgChartWidget extends StatelessWidget {
         // Το περίγραμμα του γραφήματος
         borderData: FlBorderData(
           show: true,
-          border: Border.all(color: Colors.redAccent.withOpacity(0.5)),
+          border: Border.all(color: const Color.fromARGB(255, 57, 5, 170).withValues(alpha: 0.5)),
         ),
         
         // Σταθεροποιούμε τον άξονα X ώστε η γραμμή να φαίνεται ότι "κυλάει"
@@ -55,7 +55,7 @@ class EcgChartWidget extends StatelessWidget {
           LineChartBarData(
             spots: spots,
             isCurved: false, // Το ΗΚΓ έχει αιχμηρές κορυφές, όχι καμπύλες
-            color: Colors.red,
+            color: const Color.fromARGB(255, 108, 78, 170),
             barWidth: 1.5,
             dotData: const FlDotData(show: false), // ΣΗΜΑΝΤΙΚΟ: Κρύβει τις τελείες για τέλειο performance
           ),

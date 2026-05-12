@@ -1,5 +1,5 @@
-name: ble_connect
-description: "A new Flutter project."
+name: EcgAfib
+description: "Frontend for ai analysis of an ecg"
 publish_to: 'none'
 version: 0.1.0
 
@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
   permission_handler: ^12.0.1
   universal_ble: ^1.2.0
   mobile_scanner: ^7.2.0
@@ -26,3 +27,7 @@ flutter:
   uses-material-design: true
   assets:
     - .env
+    - assets/heart.png
+flutter_icons:
+  android: "launcher_icon"
+  image_path: "assets/heart.png"
