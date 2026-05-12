@@ -1,3 +1,5 @@
+#include <OLED_SSD1306_Chart.h>
+
 #include <Wire.h>
 #include <Adafruit_ADS1X15.h>
 #include <Adafruit_GFX.h>
@@ -141,7 +143,7 @@ void loop() {
     dc_offset = dc_offset * 0.975f + (float)raw * 0.025f;
     float centered = (float)raw - dc_offset;
     float notched = biquadProcess(&notch50, centered);
-
+    Serial.println(notched);
     // --- ΑΠΟΣΤΟΛΗ BLE ---
     // Μετατρέπουμε το float σε String για ασφαλή και εύκολη αποστολή μέσω BLE
     String bleMessage = String(notched, 2); 
@@ -164,8 +166,6 @@ void loop() {
       
       if (current_bpm > 40 && current_bpm < 180) {
         bpm = current_bpm; 
-        Serial.print("BPM: ");
-        Serial.println((int)bpm);
       }
       
       last_peak_time = now_ms;
