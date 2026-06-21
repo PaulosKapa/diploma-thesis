@@ -6,13 +6,20 @@ import 'package:permission_handler/permission_handler.dart';
 //the bluetooth function
 FutureOr<bool> connectBle(String deviceId) async {
   //ask the permissions
-  var status = await Permission.bluetoothScan.request();
+  var scanStatus = await Permission.bluetoothScan.request();
   var connectStatus = await Permission.bluetoothConnect.request();
   var locationStatus = await Permission.location.request();
-  //when the permissions are granted
-  if (status.isGranted && connectStatus.isGranted) {
-    AvailabilityState state =
-        await UniversalBle.getBluetoothAvailabilityState();
+  
+  // --- CHANGED LOGIC HERE ---
+  // Modern Android (12+) needs scan/connect. 
+  // Legacy Android (11 and below, like your Android 8) ONLY needs Location to scan.
+  bool hasModernPermissions = scanStatus.isGranted && connectStatus.isGranted;
+  bool hasLegacyPermissions = locationStatus.isGranted;
+
+  //when the appropriate permissions are granted for the current OS
+  if (hasModernPermissions || hasLegacyPermissions) {
+    AvailabilityState state = await UniversalBle.getBluetoothAvailabilityState();
+    
     //wait for bluetooth to turn on
     if (state == AvailabilityState.poweredOn) {
       //scan device based on the mac we passed when scanning the qr
@@ -38,7 +45,8 @@ FutureOr<bool> connectBle(String deviceId) async {
         await UniversalBle.stopScan();
         return false;
       }
-      //connect and save to glabals.dart
+      
+      //connect and save to globals.dart
       await device.connect();
       connectedDevice = device;
       return true;
