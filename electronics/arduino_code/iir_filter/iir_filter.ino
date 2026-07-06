@@ -62,7 +62,7 @@ float biquadProcess(Biquad* f, float x) {
 // ============================================================
 float dc_offset = 0.0f;
 float last_notched = 0.0f;
-float threshold = 5000.0f; 
+float last_signal_val = 0.0f;
 
 unsigned long last_peak_time = 0;
 float bpm = 0.0f;
@@ -133,45 +133,96 @@ void loop() {
   unsigned long now_us = micros();
   unsigned long now_ms = millis();
 
-  // Έλεγχος δειγματοληψίας (πλέον ελέγχει για ~2.77ms)
-  if (now_us - last_sample_us >= SAMPLE_PERIOD_US) {
-    last_sample_us += SAMPLE_PERIOD_US;
+if (now_us - last_sample_us >= SAMPLE_PERIOD_US) {
+    // ΣΗΜΑΝΤΙΚΟ: Θέτουμε τον χρόνο στο τώρα, αποτρέποντας τα κολλητά/διπλά διαβάσματα
+    last_sample_us = now_us; 
 
-    // --- ΑΝΑΓΝΩΣΗ & ΦΙΛΤΡΑΡΙΣΜΑ ---
+    // // --- ΑΝΑΓΝΩΣΗ ---
+    // int16_t raw = ads.readADC_SingleEnded(0);
+    
+    // // Πιο άμεσο κεντράρισμα του σήματος
+    // dc_offset = dc_offset * 0.95f + (float)raw * 0.05f;
+    // float signal = (float)raw - dc_offset;
+
+    // // ==========================================
+    // //  ΠΡΟΣΘΗΚΗ: SMOOTHING (Εξομάλυνση)
+    // // ==========================================
+    // static float smoothed_signal = 0.0f;
+    
+    // // Ο συντελεστής εξομάλυνσης (alpha). 
+    // // - 0.3f σημαίνει: 30% εμπιστευόμαστε τη νέα μέτρηση, 70% κρατάμε την παλιά.
+    // // - Όσο ΠΙΟ ΜΙΚΡΟ το alpha (π.χ. 0.1f), τόσο ΠΙΟ ΑΠΑΛΟ το σήμα (αλλά έχει καθυστέρηση).
+    // // - Όσο ΠΙΟ ΜΕΓΑΛΟ το alpha (π.χ. 0.8f), τόσο πιο πιστό στο αρχικό (αλλά με θόρυβο).
+    // float alpha = 0.3f; 
+    
+    // smoothed_signal = (smoothed_signal * (1.0f - alpha)) + (signal * alpha);
+// --- 1. ΑΝΑΓΝΩΣΗ & ΚΕΝΤΡΑΡΙΣΜΑ ---
     int16_t raw = ads.readADC_SingleEnded(0);
     
-    dc_offset = dc_offset * 0.975f + (float)raw * 0.025f;
-    float centered = (float)raw - dc_offset;
-    float notched = biquadProcess(&notch50, centered);
-    Serial.println(notched);
-    // --- ΑΠΟΣΤΟΛΗ BLE ---
-    // Μετατρέπουμε το float σε String για ασφαλή και εύκολη αποστολή μέσω BLE
-    String bleMessage = String(notched, 2); 
-    pCharacteristic->setValue(bleMessage.c_str()); // ΔΙΟΡΘΩΣΗ: Σωστό format και ερωτηματικό
-    pCharacteristic->notify();
+    dc_offset = dc_offset * 0.95f + (float)raw * 0.05f;
+    float centered_signal = (float)raw - dc_offset;
 
-    // --- ΑΛΓΟΡΙΘΜΟΣ ΑΝΙΧΝΕΥΣΗΣ QRS ---
-    float derivative = notched - last_notched;
-    last_notched = notched;
-    float squared = derivative * derivative;
+    // --- 2. ΑΦΑΙΡΕΣΗ 50Hz (Notch Filter) ---
+    // Εδώ βάζουμε το κεντραρισμένο σήμα και βγάζουμε ένα νέο καθαρό
+    float notched_signal = biquadProcess(&notch50, centered_signal);
 
-    threshold = threshold * 0.995f; 
-    if (threshold < 100.0f) {
-      threshold = 100.0f; 
+    // --- 3. ΕΞΟΜΑΛΥΝΣΗ (Smoothing) ---
+    static float smoothed_signal = 0.0f;
+    float alpha = 0.3f; 
+    
+    // Εδώ χρησιμοποιούμε το NOTCHED σήμα ως είσοδο για να το εξομαλύνουμε
+    smoothed_signal = (smoothed_signal * (1.0f - alpha)) + (notched_signal * alpha);
+
+    // ==========================================
+    // ΑΠΟ ΕΔΩ ΚΑΙ ΠΕΡΑ χρησιμοποιείς κανονικά το "smoothed_signal"
+    // για το BLE, για το QRS (val = smoothed_signal;) και τα πάντα!
+    // ΑΠΟ ΕΔΩ ΚΑΙ ΠΕΡΑ χρησιμοποιείς το "smoothed_signal" 
+    // αντί για το "signal" στις αποστολές BLE και στον αλγόριθμο QRS.
+    // ==========================================
+    
+    // Αφαιρούμε προσωρινά το biquadProcess. Τα συνθετικά σήματα 
+    // από γεννήτριες παραμορφώνονται εύκολα από τα φίλτρα.
+    //smoothed_signal = biquadProcess(&notch50, smoothed_signal);
+    // --- ΑΠΟΣΤΟΛΗ BLE & SERIAL (72Hz) ---
+    static int output_counter = 0;
+    output_counter++;
+    if (output_counter >= 5) {
+      output_counter = 0;
+      String bleMessage = String(smoothed_signal, 1); 
+      pCharacteristic->setValue(bleMessage.c_str()); 
+      pCharacteristic->notify();
     }
 
-    if (squared > threshold && (now_ms - last_peak_time) > 250) {
-      float rr_interval = (float)(now_ms - last_peak_time);
-      float current_bpm = 60000.0f / rr_interval;
+   // --- ΑΠΛΟΣ ΑΛΓΟΡΙΘΜΟΣ QRS (ΜΕ ΣΤΑΘΕΡΟ ΟΡΙΟ) ---
+    
+    float val = smoothed_signal; 
+    
+    // Το "σκληρό" όριο σου (αγνοεί τα πάντα κάτω από 18.000)
+    float my_hard_threshold = 18000.0f; 
+
+    // Ελέγχουμε απλά αν το σήμα πέρασε το όριο
+    if (val > my_hard_threshold) {
       
-      if (current_bpm > 40 && current_bpm < 180) {
-        bpm = current_bpm; 
+      // Blanking 300ms για να μην μετρήσουμε το ίδιο R-peak δυο φορές
+      if ((now_ms - last_peak_time) > 300) {
+        float rr_interval = (float)(now_ms - last_peak_time);
+        float current_bpm = 60000.0f / rr_interval;
+        
+        // Λογικά όρια BPM
+        if (current_bpm > 40 && current_bpm < 180) {
+          if (bpm == 0.0f) {
+              bpm = current_bpm;
+          } else {
+              bpm = (bpm * 0.7f) + (current_bpm * 0.3f); // Ομαλοποίηση
+          }
+        }
+        last_peak_time = now_ms;
       }
-      
-      last_peak_time = now_ms;
-      threshold = squared; 
     }
-  }
+    Serial.print(val);
+    Serial.print(",");
+    Serial.println(my_hard_threshold);
+}
 
   // Ανανέωση της Οθόνης OLED
   if (now_ms - last_oled_update > 1000) {
