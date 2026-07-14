@@ -141,7 +141,7 @@ if (now_us - last_sample_us >= SAMPLE_PERIOD_US) {
     //save the value on the array
     ble_buffer[buffer_index] = smoothed_signal;
     buffer_index++;
-    //send every 5th value so the ble channel doesn't get stuffed
+    //send an array of 5 values, so the ble doesn't buffer
     if (buffer_index >= 5) {
       //convert array to bytes and send the data
       pCharacteristic->setValue((uint8_t*)ble_buffer, sizeof(ble_buffer)); 
