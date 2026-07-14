@@ -26,31 +26,27 @@ class EcgAfibState extends State<EcgAfib> {
 @override
   void initState() {
     super.initState();
-    // 1. Ξεκινάμε τη λήψη δεδομένων αμέσως μόλις ανοίξει το Widget
+    //start receiving the data
     startReceivingData(); 
   }
   @override
   void dispose() {
-    // 3. Σταματάμε το BLE όταν κλείνει η οθόνη
-    // ΣΗΜΕΙΩΣΗ: Αν η listenBle επιστρέφει StreamSubscription, αποθήκευσέ το 
-    // σε μια μεταβλητή (π.χ. bleSubscription) και κάνε εδώ bleSubscription?.cancel();
+    //stop ble when device closes
     stopBleStream(connectedDevice!, 'beb5483e-36e1-4688-b7f5-ea07361b26a8');
     super.dispose();
   }
 
   void startReceivingData() async {
-    // Κλήση της δικής σου external συνάρτησης!
-
     try{
       await listenBle(
       connectedDevice!,
       onData: (double val) {
         setState(() {
-          // Κυλάει το γράφημα
+          //for the diagram
           ecg_list.add(val);
           if (ecg_list.length > ecg_list_size) ecg_list.removeAt(0);
 
-          // Γεμίζει η λίστα του AI
+          //for the ai
           ai_list.add(val);
           if (ai_list.length > ai_list_size) ai_list.removeAt(0);
         });
@@ -63,14 +59,13 @@ class EcgAfibState extends State<EcgAfib> {
   }
 
 
-  // Καλεί την εξωτερική σου συνάρτηση AI
+  //calls the ml functon
   void triggerAnalysis() async {
     setState(() {
       isLoading = true;
       
     });
 
-    // Καλούμε την afibAnalysis από το άλλο σου αρχείο!
     int? tempResult = await afibAnalysis(List.from(ai_list));
 
     setState(() {
@@ -87,7 +82,7 @@ class EcgAfibState extends State<EcgAfib> {
     return Scaffold(
       body: Column(
         children: [
-          // Το γράφημα (Αν δεν το έχεις σε ξεχωριστό αρχείο, κάνε επικόλληση την class του εδώ κάτω)
+          //for the chart
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -97,8 +92,7 @@ class EcgAfibState extends State<EcgAfib> {
               ),
             ),
           ),
-          
-          // Το UI για το αποτέλεσμα και το κουμπί
+          //the ui
           Container(
             padding: const EdgeInsets.all(24.0),
             child: Column(

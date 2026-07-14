@@ -12,13 +12,6 @@ Future<int?> afibAnalysis(List<double> signal) async {
 
   //try to get the result, if there is an error change isLoading to false. Else change both isLoading and the result
   try {
-    // //gets data from receive_ble
-    // List<double> signal = await listenBle(
-    //   connectedDevice!,
-    //   onProgress: (current, total) {
-    //     setState(() => progress = current);
-    //   },
-    // );
     //run on a seperate thread so the app doesn't freeze
     int prediction = await Isolate.run(() async {
       //first normalize the signal

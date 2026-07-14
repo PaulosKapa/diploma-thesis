@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class EcgChartWidget extends StatelessWidget {
-  /// Η λίστα με τα σημεία που θα εμφανιστούν στην οθόνη (π.χ. τα τελευταία 300)
   final List<double> dataPoints;
   
-  /// Το σταθερό πλάτος του άξονα Χ (ώστε να μην αυξομειώνεται το γράφημα)
   final double windowSize;
 
   const EcgChartWidget({
@@ -16,17 +14,16 @@ class EcgChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Μετατροπή των απλών double σε FlSpot (συντεταγμένες X, Y) για το fl_chart
+    //change floats to flspot so they work with flchart
     List<FlSpot> spots = dataPoints.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value);
     }).toList();
 
     return LineChart(
       LineChartData(
-        // Αφαιρούμε τα νούμερα από τους άξονες για πιο "καθαρό" ιατρικό look
         titlesData: const FlTitlesData(show: false),
         
-        // Σχεδιασμός του πλέγματος (σαν μιλιμετρέ χαρτί)
+        //make the grid
         gridData: FlGridData(
           show: true,
           drawVerticalLine: true,
@@ -40,28 +37,25 @@ class EcgChartWidget extends StatelessWidget {
           ),
         ),
         
-        // Το περίγραμμα του γραφήματος
+        //border of the chart
         borderData: FlBorderData(
           show: true,
           border: Border.all(color: const Color.fromARGB(255, 57, 5, 170).withValues(alpha: 0.5)),
         ),
         
-        // Σταθεροποιούμε τον άξονα X ώστε η γραμμή να φαίνεται ότι "κυλάει"
         minX: 0,
         maxX: windowSize,
-        
-        // Τα δεδομένα της γραμμής
+        //the line's data
         lineBarsData: [
           LineChartBarData(
             spots: spots,
-            isCurved: false, // Το ΗΚΓ έχει αιχμηρές κορυφές, όχι καμπύλες
+            isCurved: false,
             color: const Color.fromARGB(255, 108, 78, 170),
             barWidth: 1.5,
-            dotData: const FlDotData(show: false), // ΣΗΜΑΝΤΙΚΟ: Κρύβει τις τελείες για τέλειο performance
+            dotData: const FlDotData(show: false),
           ),
         ],
       ),
-      // Διάρκεια zero για να μην λαγκάρει στο συνεχές real-time update
       duration: Duration.zero,
     );
   }

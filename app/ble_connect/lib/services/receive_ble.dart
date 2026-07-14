@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:universal_ble/universal_ble.dart';
 import 'dart:async';
 import '../globals.dart';
+import 'dart:typed_data';
 
 StreamSubscription? subscription;
 
@@ -26,11 +26,17 @@ async {
   
   subscription = characteristic.onValueReceived.listen((value) {
     print("BLE RAW DATA: $value");
-    final val = double.tryParse(utf8.decode(value));
-    print("PARSED VALUE: $val");
-    if (val != null) {
-      //send data via the callback
-      onData(val);      
+    //read the incoming bytes
+    var byteData = ByteData.sublistView(value);
+    //each float cahs 4 bytes, so we read the 4 values (we get 20 values in total from the esp)
+    for (int i = 0; i < byteData.lengthInBytes; i += 4) {
+      //we read the float value
+      double val = byteData.getFloat32(i, Endian.little);
+      print("PARSED VALUE: $val");
+      if (val != null) {
+        //send data via the callback
+        onData(val);      
+      }
     }    
   });
 }

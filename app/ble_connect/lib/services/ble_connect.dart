@@ -10,9 +10,6 @@ FutureOr<bool> connectBle(String deviceId) async {
   var connectStatus = await Permission.bluetoothConnect.request();
   var locationStatus = await Permission.location.request();
   
-  // --- CHANGED LOGIC HERE ---
-  // Modern Android (12+) needs scan/connect. 
-  // Legacy Android (11 and below, like your Android 8) ONLY needs Location to scan.
   bool hasModernPermissions = scanStatus.isGranted && connectStatus.isGranted;
   bool hasLegacyPermissions = locationStatus.isGranted;
 
