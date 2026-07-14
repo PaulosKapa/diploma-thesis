@@ -91,7 +91,7 @@ void setup() {
   ads.setGain(GAIN_TWO);             
   ads.setDataRate(RATE_ADS1115_860SPS);
   //Initialize the iir filter
-  biquadInit(&notch50, 0.9535f, -1.2258f, 0.9535f, -1.2213f, 0.9025f);
+  biquadInit(&notch50, 0.96311f, -1.23815f, 0.96311f, -1.23815f, 0.92622f);
   Serial.println("Starting systemm");
   last_sample_us = micros();  
   //Setting up BLE so it alwayes transmits (notify)
