@@ -1,19 +1,29 @@
 import wfdb
 import os
-from dotenv import load_dotenv
 import csv
+from dotenv import load_dotenv
+from scipy.signal import resample_poly
 
 load_dotenv()
-
 data_dir = os.getenv("DATA_PATH")
+#the sampling rate is 300 Hz and we want to change it to 360Hz. We want a 10 second sample
+target_fs = 360 
+window_samples = target_fs * 10 
 
-#open the RECORDS file to know how many records there are
-with open(os.path.join(data_dir, 'RECORDS'), 'r') as f:
-    record_names = [line.strip() for line in f]
+# Load the CinC 2017 labels
+labels_dict = {}
 
-#the sampling rate is 360 Hz. We want a 10 second sample
-fs = 360 
-window_samples = fs * 10
+#open the REFERENCE file to know how many records there are
+reference_path = os.path.join(data_dir, 'REFERENCE.csv')
+with open(reference_path, 'r') as ref_file:
+    #create a lookup table saved in the memory
+    reader = csv.reader(ref_file)
+    for row in reader:
+        if len(row) == 2:
+            labels_dict[row[0]] = row[1]
+
+record_names = list(labels_dict.keys())
+
 
 #open a csv file
 with open("afib_dataset.csv", "w", newline="") as csvfile:
@@ -23,59 +33,37 @@ with open("afib_dataset.csv", "w", newline="") as csvfile:
     writer.writerow(header)
 
     for name in record_names:
-        #get the data from all the files
-        record = wfdb.rdrecord((os.path.join(data_dir, name)), channels=[0])
-    
-        #only for the data that interest us (1 lead)
-        if(record.sig_name == ['MLII']):
-            #get the doctor's notes
-            annotation =  wfdb.rdann((os.path.join(data_dir, name)), 'atr')
-            #takes the ecg data and turns them to 1-array
-            signal = record.p_signal.flatten()
-            #get the sample and aux_note from the annotation files
-            ann_samples = annotation.sample
-            ann_notes = annotation.aux_note
+        try:
+            #get the data from all the files
+            record = wfdb.rdrecord(os.path.join(data_dir, name), channels=[0])
+        except Exception as e:
+            print(f"Skipped {name}: {e}")
+            continue
+        #takes the ecg data and turns them to 1-array
+        signal = record.p_signal.flatten()
+        overall_label = labels_dict[name]
+        #if we find afib, then label as 1. Else label as 0
+        if overall_label == 'A':
+            label = 1
+        elif overall_label in ['N', 'O']:
+            label = 0
+        else:
+            continue
 
-            #to figure out where in the annotation sample window we are
-            ann_idx = 0
-            #to know if the sample window includes afib
-            afib = False
-            #to know which sample window we are in
-            sample_ind = 0
-            #looping through each patient, one sample window at a time
-            for start in range(0, len(signal) - window_samples + 1, window_samples):
-                end = start + window_samples
+        #unsample the signal from 300Hz to 360 Hz
+        signal_360 = resample_poly(signal, up=6, down=5)
 
-                notes_found = []
-                while ann_idx < len(ann_samples) and ann_samples[ann_idx] < end:
-                    #check if there is a doctor's note for this sample and strip any hidden chars
-                    note = ann_notes[ann_idx].rstrip('\x00')
-                    #if there is a note add it to the note_found list                    
-                    if note != '':
-                        notes_found.append(note)                            
-                    ann_idx += 1
-                #check if there is afib in the list
-                if "(AFIB" in notes_found:
-                    afib = True
-                #if we find afib, then label as 1. Else label as 0
-                if (afib == False):
-                    label = 0
-                else:
-                    label = 1
-                #if there are items on the list check for the last one. If it says anything else than afib, then flag it for the next sample window
-                if len(notes_found) > 0:
-                    if notes_found[-1] != "(AFIB":
-                        afib = False
-                    else:
-                        afib = True
+        #slice the signal every 10s, so we get a dataset with 3600 values
+        #this is done for each patient seperately. If a patient has a signal that is less than 10s, they don't get included.If they have a signal that isn\t
+        #divided by 10, the leftover data aren't getting included
+        sample_ind = 0
+        for start in range(0, len(signal_360) - window_samples + 1, window_samples):
+            end = start + window_samples
+            window_data = signal_360[start:end]            
+            row = [name] + window_data.tolist() + [label]
+            writer.writerow(row)
+            sample_ind += 1
+            
+        print(name + " processed")
 
-                #the data from the signal
-                window_data = signal[start:end]
-                #write the row (name of the patien, each sample to a row and if there is afib or not)
-                row = [name] + window_data.tolist() + [label]
-                writer.writerow(row)
-                print(name+" "+str(sample_ind)+" end")
-                sample_ind+=1
-            print(name+ " end")
-        print("end final")
-
+print("Completion")
