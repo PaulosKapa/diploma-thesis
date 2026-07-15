@@ -28,7 +28,7 @@ async {
     print("BLE RAW DATA: $value");
     //read the incoming bytes
     var byteData = ByteData.sublistView(value);
-    //each float cahs 4 bytes, so we read the 4 values (we get 20 values in total from the esp)
+    //each float cahs 4 bytes, so we read the 5 values (we get 20 values in total from the esp)
     for (int i = 0; i < byteData.lengthInBytes; i += 4) {
       //we read the float value
       double val = byteData.getFloat32(i, Endian.little);
