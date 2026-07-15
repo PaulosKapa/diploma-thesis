@@ -14,10 +14,11 @@ Future<int?> afibAnalysis(List<double> signal) async {
   try {
     //run on a seperate thread so the app doesn't freeze
     int prediction = await Isolate.run(() async {
+      //normallization runs on the backend
       //first normalize the signal
-      final normalizedSignal = normalizeSignal(signal);
+      //final normalizedSignal = normalizeSignal(signal);
       //then do the prediction
-      return await handler.getPrediction(normalizedSignal);
+      return await handler.getPrediction(signal);
     });
     result = prediction;
     debugPrint(result.toString());
