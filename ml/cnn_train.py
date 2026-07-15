@@ -74,10 +74,10 @@ history = model.fit(X_train,
 predictions = np.round(model.predict(X_test))
 #confusion matrix
 cm = confusion_matrix(y_test, predictions)
-print("True Negatives: " + cm[0][0])
-print("False Positives: " + cm[0][1])
-print("False Negatives: " + cm[1][0])
-print("True Positives: " + cm[1][1])
+print("True Negatives: " + str(cm[0][0]))
+print("False Positives: " + str(cm[0][1]))
+print("False Negatives: " + str(cm[1][0]))
+print("True Positives: " + str(cm[1][1]))
 #medical metrics
 print(classification_report(y_test, predictions, target_names=["Normal (0)", "AFib (1)"]))
 
