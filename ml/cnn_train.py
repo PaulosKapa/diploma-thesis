@@ -50,9 +50,6 @@ model = models.Sequential([
         #second training block
         layers.Conv1D(32, 16, activation='relu'),
         layers.MaxPooling1D(4),
-        # #third training block
-        # layers.Conv1D(64, 8, activation='relu'),
-        # layers.MaxPooling1D(4),
         layers.GlobalAveragePooling1D(),   
         #validation block
         layers.Dense(32, activation='relu'),
