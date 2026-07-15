@@ -44,14 +44,14 @@ model = models.Sequential([
     Input(
         #what the algorithm should expect. 3600 samples, from 1 signal
         shape=(3600, 1)),    
-        #first training block
+        #first data extraction block
         layers.Conv1D(16, 32, activation='relu'),
         layers.MaxPooling1D(4),
-        #second training block
+        #second data extraction block
         layers.Conv1D(32, 16, activation='relu'),
         layers.MaxPooling1D(4),
         layers.GlobalAveragePooling1D(),   
-        #validation block
+        #classification block
         layers.Dense(32, activation='relu'),
         layers.Dropout(0.5),
         layers.Dense(1, activation='sigmoid')
