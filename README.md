@@ -10,7 +10,7 @@ Department of Biomedical Engineering, University of West Attica, Greece
 This repository contains all the code and assets used as part of my diploma thesis. The objective of this project is the design and development of a working, low-cost, and totally portable electrocardiograph (ECG) smart device. It integrates custom hardware, mobile software, and machine learning for seamless cardiovascular monitoring and telemedicine applications.
 
 ## Key Features
-* **Real-time Signal Acquisition:** Custom frontend analog and digital electronics that capture and process the siganl of the heart
+* **Real-time Signal Acquisition:** Custom frontend analog and digital electronics that capture and process the signal of the heart
 * **No Right Leg Drive (RLD):** Ease of connectivity without the hassle of a physical RLD electrode.
 * **Mobile Integration:** Real-time signal display and pairing with a mobile app.
 * **AI-Assisted Diagnostics:** Integrated machine learning (ML) algorithm to predict atrial fibrillation (AFib) symptoms from the user's ECG.
