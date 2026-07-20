@@ -14,7 +14,7 @@ This repository contains all the code and assets used as part of my diploma thes
 * **No Right Leg Drive (RLD):** Ease of connectivity without the hassle of a physical RLD electrode.
 * **Mobile Integration:** Real-time signal display and pairing with a mobile app.
 * **AI-Assisted Diagnostics:** Integrated machine learning (ML) algorithm to predict atrial fibrillation (AFib) symptoms from the user's ECG.
-* **Validated Performance:** Featuures verified using a professional **TechPatient® CARDIO V4** ECG simulator.
+* **Validated Performance:** Function verified using a professional **TechPatient® CARDIO V4** ECG simulator.
 
 ## Block Diagram
 The implementation of the system is built seamlessly to prioritize an intuitive user interface, portable operation, and automated analytics. More information on the system layout can be found in the block diagram below:
